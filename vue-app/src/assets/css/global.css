@@ -1,0 +1,11 @@
+/*全局样式表*/
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}

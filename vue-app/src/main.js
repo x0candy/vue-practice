@@ -6,6 +6,8 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
+import './assets/css/global.css'
+
 axios.defaults.url = 'http://127.0.0.1:8888/api/private/v1/'
 Vue.config.productionTip = false
 Vue.use(ElementUI)

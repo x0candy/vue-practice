@@ -1,0 +1,58 @@
+{
+  "id": "2264142",
+  "name": "final_test_icon",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "17331142",
+      "name": "菜单管理",
+      "font_class": "caidanguanli",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "17331143",
+      "name": "密码配置",
+      "font_class": "mimapeizhi",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "17331148",
+      "name": "用户管理",
+      "font_class": "yonghuguanli",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "18729648",
+      "name": "右",
+      "font_class": "you",
+      "unicode": "e65f",
+      "unicode_decimal": 58975
+    },
+    {
+      "icon_id": "18729664",
+      "name": "左",
+      "font_class": "zuo",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "8776842",
+      "name": "search",
+      "font_class": "icon-test",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "8777370",
+      "name": "list",
+      "font_class": "icon-test2",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    }
+  ]
+}

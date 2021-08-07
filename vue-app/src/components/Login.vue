@@ -7,15 +7,23 @@
              alt="头像">
       </div>
       <!--登陆表单-->
-      <el-form>
+      <el-form class="login-form"
+               :model="form">
         <el-form-item>
-          <el-input placeholder="用户名"></el-input>
+          <i class="iconfont icon-biaoqianA01_wode-35"></i>
+          <el-input placeholder="用户名"
+                    prefix-icon="iconfont icon-yonghuguanli"
+                    v-model="form.username"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input placeholder="密码"></el-input>
+          <el-input placeholder="密码"
+                    prefix-icon="iconfont icon-mimapeizhi"
+                    v-model="form.password"
+                    type="password"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary">登陆</el-button>
+        <el-form-item class="login-btn">
+          <el-button type="primary"
+                     @click="login">登陆</el-button>
           <el-button type="info">重置</el-button>
         </el-form-item>
       </el-form>
@@ -25,11 +33,43 @@
 
 <script>
 export default {
-
+  name: 'login',
+  data () {
+    return {
+      form: { //用户名与密码
+        username: 'admin',
+        password: '123456'
+      }
+    }
+  },
+  methods: {
+    login: function () {   //登陆请求
+      this.$axios.post('http://127.0.0.1:8888/api/private/v1/login', this.form)
+        .then(res => {
+          console.log(res);
+          if (res.data.meta.status == 200) {
+            this.$message({
+              message: res.data.meta.msg,
+              type: 'success'
+            })
+          } else {
+            this.$message.error(res.data.meta.msg)
+          }
+        })
+        .catch(Error => console.log(Error))
+    }
+  },
 }
 </script>
 
 <style scoped>
+.login-form {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0px 20px;
+}
 .login-container {
   height: 100%;
   background-color: #2b4b6b;
@@ -61,5 +101,8 @@ export default {
   height: 100%;
   border-radius: 50%;
   background-color: #eee;
+}
+.login-btn {
+  float: right;
 }
 </style>

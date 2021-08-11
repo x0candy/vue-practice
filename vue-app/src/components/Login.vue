@@ -8,14 +8,16 @@
       </div>
       <!--登陆表单-->
       <el-form class="login-form"
-               :model="form">
-        <el-form-item>
+               :model="form"
+               :rules="rules"
+               ref="loginFormRef">
+        <el-form-item prop="username">
           <i class="iconfont icon-biaoqianA01_wode-35"></i>
           <el-input placeholder="用户名"
                     prefix-icon="iconfont icon-yonghuguanli"
                     v-model="form.username"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="password">
           <el-input placeholder="密码"
                     prefix-icon="iconfont icon-mimapeizhi"
                     v-model="form.password"
@@ -24,7 +26,8 @@
         <el-form-item class="login-btn">
           <el-button type="primary"
                      @click="login">登陆</el-button>
-          <el-button type="info">重置</el-button>
+          <el-button type="info"
+                     @click="reset('loginFormRef')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -39,24 +42,46 @@ export default {
       form: { //用户名与密码
         username: 'admin',
         password: '123456'
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名！', trigger: 'blur' },
+          { min: 3, max: 10, message: '用户名不符合规范！', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码！', trigger: 'blur' },
+          { min: 3, max: 10, message: '密码不符合规范！', trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
     login: function () {   //登陆请求
-      this.$axios.post('http://127.0.0.1:8888/api/private/v1/login', this.form)
-        .then(res => {
-          console.log(res);
-          if (res.data.meta.status == 200) {
-            this.$message({
-              message: res.data.meta.msg,
-              type: 'success'
+      this.$refs['loginFormRef'].validate(valid => {//表单校验
+        if (valid) {
+          this.$axios.post('http://127.0.0.1:8888/api/private/v1/login', this.form)
+            .then(res => {
+              console.log(res)
+              if (res.data.meta.status == 200) {
+                const token = res.data.data.token
+                window.sessionStorage.setItem('token', token)
+                this.$router.push('/home')
+                this.$message({
+                  message: res.data.meta.msg,
+                  type: 'success'
+                })
+              } else {
+                this.$message.error(res.data.meta.msg)
+              }
             })
-          } else {
-            this.$message.error(res.data.meta.msg)
-          }
-        })
-        .catch(Error => console.log(Error))
+            .catch(Error => console.log(Error))
+        } else {
+          this.$message.error('用户名或密码格式不正确！')
+        }
+      })
+    },
+    reset: function (formName) {
+      this.$refs[formName].resetFields()
     }
   },
 }

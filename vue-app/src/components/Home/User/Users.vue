@@ -40,7 +40,8 @@
                        @change="changeUserState(scope.row)"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作"
+                         width="300px">
           <template slot-scope="scope">
             <el-tooltip class="item"
                         effect="dark"
@@ -62,11 +63,12 @@
             </el-tooltip>
             <el-tooltip class="item"
                         effect="dark"
-                        content="设置用户"
+                        content="分配角色"
                         placement="top">
               <el-button type="warning"
                          class="el-icon-setting"
-                         size="mini"></el-button>
+                         size="mini"
+                         @click="setRoleDialog(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -142,9 +144,31 @@
       </el-form>
       <span slot="footer"
             class="dialog-footer">
-        <el-button>取消</el-button>
+        <el-button @click="editDialogVisible = false">取消</el-button>
         <el-button type="primary"
                    @click="editUser">确认</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="分配角色"
+               :visible.sync="setDialogVisible"
+               @close="resetDialog">
+      <div>
+        <p>当前用户：{{userInfo.username}}</p>
+        <p>当前角色：{{userInfo.role_name}}</p>
+        <p>分配新角色：
+          <el-select v-model="selectedRoleId">
+            <el-option v-for="item in roleList"
+                       :key="item.id"
+                       :label="item.roleName"
+                       :value="item.id"></el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer"
+            class="dialog-footer">
+        <el-button @click="setDialogVisible=false">取消</el-button>
+        <el-button type="primary"
+                   @click="setRole">确认</el-button>
       </span>
     </el-dialog>
   </div>
@@ -171,6 +195,11 @@ export default {
       callback(new Error("请输入合法的手机号"))
     }
     return {
+      selectedRoleId: '',
+      //需要分配角色的用户信息
+      userInfo: {},
+      //角色列表
+      roleList: [],
       //查询列表
       queryInfo: {
         query: '',
@@ -192,6 +221,7 @@ export default {
       total: 0,
       addDialogVisible: false,
       editDialogVisible: false,
+      setDialogVisible: false,
       //表单校验
       addFormRules: {
         username: [
@@ -268,9 +298,7 @@ export default {
         if (!valid) return
         //校验通过,发起http请求
         const { data: res } = await this.$axios.post('users', this.addForm)
-
         if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
-        this.userList()
         this.$message.success(res.meta.msg)
         this.addDialogVisible = false
       })
@@ -295,12 +323,30 @@ export default {
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
         this.$message.success(res.meta.msg)
       })
+    },
+    async setRoleDialog (user) {
+      this.userInfo = user
+      const { data: res } = await this.$axios.get('roles')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.roleList = res.data
+      this.setDialogVisible = true
+    },
+    async setRole () {
+      const { data: res } = await this.$axios.put(`users/${this.userInfo.id}/role`, { rid: this.selectedRoleId })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.setDialogVisible = false
+      this.userList()
+      return this.$message.success(res.meta.msg)
+    },
+    resetDialog () {
+      this.selectedRoleId = ''
+      this.userInfo = {}
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .el-breadcrumb {
   margin-bottom: 15px;
 }

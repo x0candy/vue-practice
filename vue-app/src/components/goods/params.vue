@@ -76,7 +76,8 @@
               <template slot-scope="scope">
                 <el-tag v-for="(item,i) in scope.row.attr_vals"
                         :key="i"
-                        closable>{{item}}</el-tag>
+                        closable
+                        @close="handleClose(scope.row,i)">{{item}}</el-tag>
                 <el-input v-if="scope.row.inputVisible==true"
                           v-model="scope.row.inputValue"
                           class="input-new-tag"
@@ -203,12 +204,17 @@ export default {
         this.manyTable = res.data
         this.manyTable.forEach(item => {
           item.attr_vals = item.attr_vals ?
-            item.attr_vals.split(' ') : []
+            item.attr_vals.split(',') : []
           this.$set(item, "inputVisible", 'false')
           this.$set(item, "inputValue", "")
         })
       } else {
         this.onlyTable = res.data
+        this.onlyTable.forEach(item=>{
+          item.attr_vals = item.attr_vals?item.attr_vals.split(' '):[]
+          this.$set(item, "inputVisible", 'false')
+          this.$set(item, "inputValue", "")
+        })
       }
       console.log(this.manyTable);
     },
@@ -236,7 +242,6 @@ export default {
     editAttrs () {
       this.$refs.addAttrRef.validate(async valid => {
         if (valid) {
-          console.log(this.editAttr);
           const { data: res } = await this.$axios.put(`categories/${this.selectedKeys}/attributes/${this.editAttr.attr_id}`, {
             attr_name: this.addAttr.attr_name,
             attr_sel: this.activeName,
@@ -278,7 +283,7 @@ export default {
     showInput (item) {
       item.inputVisible = true
       this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus();
+        this.$refs.saveTagInput.focus();
       });
     },
     async handleClose (item, index) {
